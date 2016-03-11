@@ -4,11 +4,10 @@ groups:
     jobs:
     - build-task-image
 jobs:
-- name: job-build-task-image
+- name: build-task-image
   serial: true
   plan:
   - get: repo-image
-    resource: git-pipeline-docker-image
     trigger: true
   - put: ciimage 
     params:
@@ -18,9 +17,8 @@ resources:
 - name: repo-image 
   type: git
   source:
-    uri: {{github-git-repo}}
-    branch: master
-    private_key: {{github-private-key}}
+    uri: {{github-git-repo}} 
+    branch: master 
     paths: [ci/ci_image/*]
 - name: ciimage 
   type: docker-image
