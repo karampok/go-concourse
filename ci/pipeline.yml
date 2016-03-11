@@ -1,0 +1,31 @@
+---
+groups:
+  - name: image
+    jobs:
+    - build-task-image
+jobs:
+- name: job-build-task-image
+  serial: true
+  plan:
+  - get: repo-image
+    resource: git-pipeline-docker-image
+    trigger: true
+  - put: ciimage 
+    params:
+      build: repo-image/ci/ci_image
+
+resources:
+- name: repo-image 
+  type: git
+  source:
+    uri: {{github-git-repo}}
+    branch: master
+    private_key: {{github-private-key}}
+    paths: [ci/ci_image/*]
+- name: ciimage 
+  type: docker-image
+  source:
+    email: {{docker-hub-email}}
+    username: {{docker-hub-username}}
+    password: {{docker-hub-password}}
+    repository: {{docker-create-hub-task-image}}
