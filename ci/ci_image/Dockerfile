@@ -3,7 +3,7 @@ FROM mariadb:10.1.12
 
 # gcc for cgo
 RUN apt-get update && apt-get install -y --no-install-recommends \
-		g++ gcc libc6-dev curl make ca-certificates\
+		vim wget g++ gcc libc6-dev curl make ca-certificates\
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV GOLANG_VERSION 1.5.3
@@ -22,3 +22,4 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
 
 COPY go-wrapper /usr/local/bin/
+COPY docker-entrypoint.sh /usr/local/bin/
