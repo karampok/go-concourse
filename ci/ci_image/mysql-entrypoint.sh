@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+export MYSQL_ALLOW_EMPTY_PASSWORD=true
+
 # if command starts with an option, prepend mysqld
 if [ "${1:0:1}" = '-' ]; then
 	set -- mysqld "$@"
@@ -105,4 +107,4 @@ if [ "$1" = 'mysqld' ]; then
 	chown -R mysql:mysql "$DATADIR"
 fi
 
-exec "$@"
+exec "$@" &
