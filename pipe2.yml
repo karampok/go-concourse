@@ -1,0 +1,66 @@
+resources:
+- name: gocf-src-repo
+  type: git
+  source:
+    uri: git@github.com:karampok/gocf.git 
+    branch: master
+    private_key:  {{github-private-key}}
+- name: version
+  type: semver
+  source:
+    bucket: gocf-ci-storeplace2
+    key: current-version
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+    initial_version: 1.0.0
+    region_name: eu-west-1 
+- name: gocf-rc
+  type: s3
+  source:
+    bucket: gocf-ci-storeplace2
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+    region_name: eu-west-1 
+
+
+
+
+
+
+
+jobs:
+- name: gocf-unit-test
+  plan:
+  - get: gocf-src-repo 
+    trigger: true
+  - task: unit
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: golang
+          tag: 1.5.3 
+      inputs:
+      - name: gocf-src-repo
+        path: go/src/github.com/karampok/gocf
+      run:
+        path: uname  
+        args: []
+
+- name: gocf-build-rc
+  serial_groups: [version]
+  plan:
+  - get: gocf-src-repo
+    passed: [gocf-unit-test]
+    trigger: true
+  - get: version
+    params: {pre: rc}    
+  - task: build-artifact
+    file: gocf-src-repo/ci/build-artifact.yml
+  - put: gocf-rc
+    params: {file: build-artifact/gocf*}
+  - put: version
+    params: {file: version/number}
+
+
