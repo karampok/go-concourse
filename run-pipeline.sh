@@ -7,7 +7,7 @@ credentials=$1; shift
 trigger_job=$1; shift
 set -e
 
-fly_target=${fly_target:-"lite"}
+fly_target=${fly_target:-"srvci"}
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo "Concourse: ${fly_target}"
