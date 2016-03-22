@@ -18,16 +18,11 @@ resources:
   type: s3
   source:
     bucket: gocf-ci-storeplace2
+    regexp: gocf-(.*)
     access_key_id: {{s3-access-key-id}}
     secret_access_key: {{s3-secret-access-key}}
     region_name: eu-west-1 
-
-
-
-
-
-
-
+    
 jobs:
 - name: gocf-unit-test
   plan:
@@ -61,6 +56,4 @@ jobs:
   - put: gocf-rc
     params: {file: build-artifact/gocf*}
   - put: version
-    params: {file: version/number}
-
-
+    params: {file: version/version}
